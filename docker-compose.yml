@@ -2,15 +2,19 @@ version: "3.5"
 services:
   gitlab:
     image: 'gitlab/gitlab-ce:latest'
-    hostname: 'localhost'
+    hostname: ${GITLAB_HOST}
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://localhost:9090'
+        external_url 'http://${GITLAB_HOST}:9090'
         gitlab_rails['gitlab_shell_ssh_port'] = 2224
+        gitlab_rails['gitlab_default_projects_features_container_registry'] = true
+        registry['enable'] = true
+        registry_external_url 'http://${GITLAB_HOST}:4567'
     ports:
       - '9090:9090'
       - '2224:22'
+      - '4567:4567'
     volumes:
-      - './gitlab/config:/etc/gitlab'
-      - './gitlab/logs:/var/log/gitlab'
-      - './gitlab/data:/var/opt/gitlab'
+      - '${GITLAB_PATH}/config:/etc/gitlab'
+      - '${GITLAB_PATH}/gitlab/logs:/var/log/gitlab'
+      - '${GITLAB_PATH}/gitlab/data:/var/opt/gitlab'
