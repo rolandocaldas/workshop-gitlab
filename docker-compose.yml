@@ -1,0 +1,16 @@
+version: "3.5"
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    hostname: 'localhost'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost:9090'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+    ports:
+      - '9090:9090'
+      - '2224:22'
+    volumes:
+      - './gitlab/config:/etc/gitlab'
+      - './gitlab/logs:/var/log/gitlab'
+      - './gitlab/data:/var/opt/gitlab'
