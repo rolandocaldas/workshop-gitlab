@@ -2,6 +2,7 @@ version: "3.5"
 services:
   gitlab:
     image: 'gitlab/gitlab-ce:latest'
+    restart: unless-stopped
     hostname: ${GITLAB_HOST}
     environment:
       GITLAB_OMNIBUS_CONFIG: |
@@ -18,3 +19,10 @@ services:
       - '${GITLAB_PATH}/config:/etc/gitlab'
       - '${GITLAB_PATH}/gitlab/logs:/var/log/gitlab'
       - '${GITLAB_PATH}/gitlab/data:/var/opt/gitlab'
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    restart: unless-stopped
+    volumes:
+      - ${GITLAB_RUNNER_PATH}/config:/etc/gitlab-runner
+      - ${GITLAB_RUNNER_PATH}/run:/var/run
+     
