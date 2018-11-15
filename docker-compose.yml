@@ -1,9 +1,8 @@
 version: "3.5"
 services:
-  gitlab:
+  gitlab.example.com:
     image: 'gitlab/gitlab-ce:latest'
     restart: unless-stopped
-    hostname: ${GITLAB_HOST}
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://${GITLAB_HOST}:9090'
@@ -19,10 +18,21 @@ services:
       - '${GITLAB_PATH}/config:/etc/gitlab'
       - '${GITLAB_PATH}/gitlab/logs:/var/log/gitlab'
       - '${GITLAB_PATH}/gitlab/data:/var/opt/gitlab'
+    networks:
+     gitlabWorkshop:
+       ipv4_address: 172.24.0.2
   gitlab-runner:
     image: gitlab/gitlab-runner:alpine
     restart: unless-stopped
     volumes:
       - ${GITLAB_RUNNER_PATH}/config:/etc/gitlab-runner
-      - ${GITLAB_RUNNER_PATH}/run:/var/run
-     
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      gitlabWorkshop:
+        ipv4_address: 172.24.0.3
+networks:
+  gitlabWorkshop:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.24.0.0/16     
